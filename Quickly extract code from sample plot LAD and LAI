@@ -1,0 +1,110 @@
+SamplePath1 = 'Voxelized array file';
+SamplePath2 = 'DEM array file corresponding to each plot';
+namelist = dir([SamplePath1 ,'*.csv']);
+namelist2 = dir([SamplePath2 ,'*.mat']);
+    l=size(namelist);
+    l2=size(namelist2);
+for i = 1:l
+    ii=i-1;
+    namelist(i).name;
+    filename{i} = [SamplePath1,namelist(i).name];
+    csvread(filename{i},1,0);
+    A=ans;
+    K(:,1)=A(:,1)-443000;
+    K(:,2)=A(:,2)-2835000;
+    K(:,3)=A(:,3);
+     ka1=K(:,1);
+     ka2=floor(ka1*2);
+     ka=ka2*0.5; 
+     kb1=K(:,2);
+     kb2=floor(kb1*2);
+     kb=kb2*0.5;
+     kc1=K(:,3);
+     kc2=floor(kc1*2);
+     kc=kc2*0.5;
+     ke1=ka*1000000+kb;
+     ke=ke1+kc*1000000000000;
+     K=[];
+    Sam=A;
+    Sam(:,5)=ke1;
+    hd=0;
+       for j = 1:l2 
+         load('file address\plotarea.mat');%Projected area of each plot
+         plotarea1=plotarea(j,2);
+        Sam1=Sam;
+         namelist2(j).name;
+         filename2{j} = [SamplePath2,namelist2(j).name];
+         importdata(filename2{j});
+         B=ans;
+     KK(:,1)=B(:,1)-443000;
+     KK(:,2)=B(:,2)-2835000;
+     KK(:,3)=B(:,3);
+
+     a1=KK(:,1);
+     a2=floor(a1*2);
+     a=a2*0.5; 
+     b1=KK(:,2);
+     b2=floor(b1*2);
+     b=b2*0.5;
+     c1=KK(:,3);
+     c2=floor(c1*2);
+     c=c2*0.5;
+     e1=a*1000000+b;
+
+     e=e1+c*1000000000000;
+     KK=[];
+     dem=e1;
+     dem(:,2)=ans(:,3);
+
+         lenth=size(B,1);
+         for  r=1:lenth
+              p=dem(r,1);
+              [m,n]=find(Sam1(:,5)==p);
+              m1=isempty(m);
+              if m1==0
+              Sam1(m,6)=dem(r,2);
+              end
+          end
+              [y,u]=find(Sam1(:,6)==0);
+              Sam1(y,:)=[];
+              Sam1(:,7)=Sam1(:,3)-Sam1(:,6);
+              [y1,u1]=find(Sam1(:,7)<2);
+              Sam1(y1,:)=[];
+              Ba1= Sam1(:,7);
+              Ba2=floor(Ba1*2);
+              Ba=Ba2*0.5; 
+              BB=Ba;
+              BB(:,2)=Sam1(:,4);
+              BAunique = unique(BB(:,1),'stable');
+              Bbibo = arrayfun(@(x) sum(BB(BB(:,1) == BAunique(x),2)),1:length(BAunique));%求和
+              Balll = [BAunique,Bbibo']; 
+              Ball=sortrows(Balll,1);
+              LADqiuhee=Ball(:,1);
+              LADqiuheee=Ball(:,2)*0.25*(1/plotarea1);
+              hss=size(LADqiuhee,1);
+              ss=hd+1;
+              hd=hd+hss;
+              stemp1 =['A' num2str(ss) ':' 'A' num2str(hd)];
+              stemp2 =['B' num2str(ss) ':' 'B' num2str(hd)];
+              stemp3 =[namelist(i).name];
+              stemp3(end-3:end)=[];
+              stemp4 =[namelist(i).name];
+              stemp4(end-6:end)=[];
+              stemp5 =[stemp3,stemp4];
+              hs=ii*18+j;
+              stemp =['A' num2str(hs)];
+              AA(:,1)=(Sam1(:,5));
+              AA(:,2)=(Sam1(:,4));
+              Aunique = unique(AA(:,1),'stable');
+              bibo = arrayfun(@(x) sum(AA(AA(:,1) == Aunique(x),2)),1:length(Aunique));
+              all = [Aunique,bibo'];  
+              LAIqiuhe1=sum(all(:,2));
+              LAIqiuhe=LAIqiuhe1*0.25*(1/plotarea1);
+
+xlswrite('Output address',LAIqiuhe,stemp4,stemp);
+xlswrite('Output address',LADqiuhee,stemp3,stemp1);%LAD result
+xlswrite('Output address',LADqiuheee,stemp3,stemp2); %LAD result
+clearvars -except SamplePath1 SamplePath2 namelist namelist2 l l2 i j hs sum ii Sam ss hd;
+end
+clear Sam;
+end
