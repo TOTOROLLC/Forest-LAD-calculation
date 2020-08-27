@@ -65,6 +65,7 @@ for i = 1:l
               Sam1(m,6)=dem(r,2);
               end
           end
+
               [y,u]=find(Sam1(:,6)==0);
               Sam1(y,:)=[];
               Sam1(:,7)=Sam1(:,3)-Sam1(:,6);
