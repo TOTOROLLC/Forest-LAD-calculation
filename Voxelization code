@@ -1,0 +1,56 @@
+for  i=11:20;
+  j=0.01*i;
+  KK=O;%O is point cloud data
+  KK(:,1)=KK(:,1)-443000;
+  KK(:,2)=KK(:,2)-2835000;
+  a1=KK(:,1);
+  a2=floor(a1*(1/j));
+  a=a2*j; 
+  b1=KK(:,2);
+  b2=floor(b1*(1/j));
+  b=b2*j;
+  c1=KK(:,3);
+  c2=floor(c1*(1/j));
+  c=c2*j;
+
+  aa1=KK(:,1);
+  aa2=floor(aa1*(1/0.5));
+  aa=aa2*0.5; 
+  bb1=KK(:,2);
+  bb2=floor(bb1*(1/0.5));
+  bb=bb2*0.5;
+  cc1=KK(:,3);
+  cc2=floor(cc1*(1/0.5)); 
+  cc=cc2*0.5;
+
+  e1=a*1000000+b;
+  e=e1+c*1000000000000;
+  ee1=aa*100000+bb;
+  ee=ee1+cc*10000000000;
+
+  s1=[e(1:end),ee(1:end)];
+  s2=s1;
+
+ [tmp I] = unique(s2(:,1), 'first');
+  r = s2(I,:);
+  ua1=unique(r(:,2));
+  [h all]=hist(r(:,2),ua1);
+  h1=h.';
+  all(:,2)=h1;
+  all(:,3)=floor(all(:,1)/1000000000);
+  all(:,3)=all(:,3)/10;
+  all(:,4)=all(:,1)-all(:,3)*10000000000;
+  all(:,4)=floor(all(:,4)/1000);
+  all(:,5)=all(:,1)-all(:,3)*10000000000-all(:,4)*1000;
+  all(:,4)=443000+all(:,4)/100;
+  all(:,5)=2835000+all(:,5);
+  all(:,6)=all(:,5)*100000000+all(:,4);
+  all(:,7)=(all(:,2)*j*j*j)*LICF/0.0625;%LICF is the leaf inclination correction coefficient corresponding to the scheme
+  all1(:,1)=all(:,4);
+  all1(:,2)=all(:,5);
+  all1(:,3)=all(:,3);
+  all1(:,4)=all(:,7);
+  stemp = [num2str(i) ];
+ xlswrite('output address',all1,stemp);Voxelized array result output
+clearvars -except zs;
+end
